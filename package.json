@@ -1,0 +1,49 @@
+{
+  "name": "fredmen",
+  "version": "1.0.0",
+  "description": "FREDMEN - Mobile-first social discovery platform for real-world meetups",
+  "private": true,
+  "workspaces": [
+    "apps/mobile",
+    "apps/backend",
+    "packages/*"
+  ],
+  "scripts": {
+    "mobile": "yarn workspace @fredmen/mobile start",
+    "backend": "yarn workspace @fredmen/backend dev",
+    "mobile:ios": "yarn workspace @fredmen/mobile ios",
+    "mobile:android": "yarn workspace @fredmen/mobile android",
+    "backend:build": "yarn workspace @fredmen/backend build",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "type-check": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "yarn": ">=1.22.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/fredmen.git"
+  },
+  "keywords": [
+    "social",
+    "discovery",
+    "meetup",
+    "location-based",
+    "react-native",
+    "maps"
+  ],
+  "author": "FREDMEN Team",
+  "license": "SEE LICENSE IN LICENSE"
+}
