@@ -9,7 +9,8 @@ EXTENSION_TARGET="${EXTENSIONS_DIR}/fredmen.gemini-agent-0.1.0"
 
 mkdir -p "${EXTENSIONS_DIR}" "${USER_DATA_DIR}"
 
-if [ -d "${EXTENSION_SOURCE}" ] && [ ! -d "${EXTENSION_TARGET}" ]; then
+if [ -d "${EXTENSION_SOURCE}" ]; then
+  rm -rf "${EXTENSION_TARGET}"
   cp -R "${EXTENSION_SOURCE}" "${EXTENSION_TARGET}"
 fi
 

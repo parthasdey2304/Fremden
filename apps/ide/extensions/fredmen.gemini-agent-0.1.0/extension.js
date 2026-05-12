@@ -1,3 +1,7 @@
+const crypto = require('crypto');
+const http = require('http');
+const https = require('https');
+const { URL } = require('url');
 const vscode = require('vscode');
 
 const MAX_CONTEXT_CHARS = 12000;
@@ -50,38 +54,70 @@ const getActiveFileContext = () => {
   };
 };
 
-const requestGemini = async ({ prompt, proxyUrl, model }) => {
-  if (typeof fetch !== 'function') {
-    throw new Error('Fetch API is not available in the extension host.');
-  }
+const requestGemini = ({ prompt, proxyUrl, model }) =>
+  new Promise((resolve, reject) => {
+    const parsedUrl = new URL(proxyUrl);
+    const body = JSON.stringify({ prompt, model });
+    const client = parsedUrl.protocol === 'http:' ? http : https;
 
-  const response = await fetch(proxyUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, model }),
+    const request = client.request(
+      {
+        protocol: parsedUrl.protocol,
+        hostname: parsedUrl.hostname,
+        port: parsedUrl.port || (parsedUrl.protocol === 'http:' ? 80 : 443),
+        path: `${parsedUrl.pathname}${parsedUrl.search}`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body),
+        },
+      },
+      (response) => {
+        let responseBody = '';
+
+        response.on('data', (chunk) => {
+          responseBody += chunk;
+        });
+
+        response.on('end', () => {
+          let payload = {};
+
+          if (responseBody) {
+            try {
+              payload = JSON.parse(responseBody);
+            } catch (error) {
+              reject(new Error('Failed to parse Gemini response.'));
+              return;
+            }
+          }
+
+          if ((response.statusCode || 0) >= 400) {
+            const message = payload?.error || `Gemini request failed (${response.statusCode}).`;
+            reject(new Error(message));
+            return;
+          }
+
+          resolve(payload?.text || '');
+        });
+      },
+    );
+
+    request.on('error', reject);
+    request.write(body);
+    request.end();
   });
 
-  const payload = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const message = payload?.error || `Gemini request failed (${response.status}).`;
-    throw new Error(message);
-  }
-
-  return payload?.text || '';
-};
-
 const getWebviewHtml = (webview, includeFileContext) => {
-  const nonce = String(Date.now());
+  const nonce = crypto.randomUUID();
 
   return `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
-      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';" />
+      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'nonce-${nonce}'; script-src 'nonce-${nonce}';" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Gemini Agent</title>
-      <style>
+      <style nonce="${nonce}">
         body { font-family: sans-serif; margin: 0; padding: 16px; color: var(--vscode-foreground); }
         .row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
         textarea { width: 100%; height: 140px; resize: vertical; }

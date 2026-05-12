@@ -54,7 +54,11 @@ type GeminiApiResponse = {
   usageMetadata?: unknown;
 };
 
-const postJson = async (url: string, payload: unknown): Promise<{ status: number; data: GeminiApiResponse }> => {
+const postJson = async (
+  url: string,
+  payload: unknown,
+  extraHeaders: Record<string, string> = {},
+): Promise<{ status: number; data: GeminiApiResponse }> => {
   const parsedUrl = new URL(url);
   const body = JSON.stringify(payload);
 
@@ -69,6 +73,7 @@ const postJson = async (url: string, payload: unknown): Promise<{ status: number
         headers: {
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(body),
+          ...extraHeaders,
         },
       },
       (response) => {
@@ -90,7 +95,7 @@ const postJson = async (url: string, payload: unknown): Promise<{ status: number
             const data = JSON.parse(responseBody) as GeminiApiResponse;
             resolve({ status, data });
           } catch (error) {
-            reject(error);
+            reject(new Error('Failed to parse Gemini response.'));
           }
         });
       },
@@ -123,16 +128,22 @@ app.post('/api/ide/gemini', async (req: Request, res: Response, next: NextFuncti
 
     const baseUrl = process.env.GEMINI_API_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta';
     const modelName = model || process.env.GEMINI_DEFAULT_MODEL || 'gemini-1.5-flash';
-    const url = `${baseUrl}/models/${encodeURIComponent(modelName)}:generateContent?key=${apiKey}`;
+    const url = `${baseUrl}/models/${encodeURIComponent(modelName)}:generateContent`;
 
-    const { status, data } = await postJson(url, {
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: prompt }],
-        },
-      ],
-    });
+    const { status, data } = await postJson(
+      url,
+      {
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: prompt }],
+          },
+        ],
+      },
+      {
+        'x-goog-api-key': apiKey,
+      },
+    );
 
     if (status >= 400) {
       res.status(status).json({
