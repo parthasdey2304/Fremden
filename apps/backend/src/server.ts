@@ -54,12 +54,16 @@ type GeminiApiResponse = {
   usageMetadata?: unknown;
 };
 
-const postJson = async (
+const postExternalJson = async (
   url: string,
   payload: unknown,
   extraHeaders: Record<string, string> = {},
 ): Promise<{ status: number; data: GeminiApiResponse }> => {
   const parsedUrl = new URL(url);
+
+  if (parsedUrl.protocol !== 'https:') {
+    throw new Error('Gemini API base URL must use HTTPS.');
+  }
   const body = JSON.stringify(payload);
 
   return new Promise((resolve, reject) => {
@@ -134,7 +138,7 @@ app.post('/api/ide/gemini', async (req: Request, res: Response, next: NextFuncti
     const modelName = model || process.env.GEMINI_DEFAULT_MODEL || 'gemini-1.5-flash';
     const url = `${baseUrl}/models/${encodeURIComponent(modelName)}:generateContent`;
 
-    const { status, data } = await postJson(
+    const { status, data } = await postExternalJson(
       url,
       {
         contents: [

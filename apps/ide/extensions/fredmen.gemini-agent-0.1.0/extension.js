@@ -108,13 +108,13 @@ const requestGemini = ({ prompt, proxyUrl, model }) =>
   });
 
 const getWebviewHtml = (webview, includeFileContext) => {
-  const cspNonce = crypto.randomUUID();
+  const cspNonce = crypto.randomBytes(16).toString('base64');
 
   return `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
-      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'nonce-${cspNonce}'; script-src 'nonce-${cspNonce}'; connect-src http://localhost:3000 http://backend:3000;" />
+      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'nonce-${cspNonce}'; script-src 'nonce-${cspNonce}'; connect-src http://localhost:3000 https://localhost:3000 http://backend:3000 https://backend:3000;" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Gemini Agent</title>
       <style nonce="${cspNonce}">

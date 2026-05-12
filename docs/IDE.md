@@ -33,7 +33,7 @@ Then open: `http://localhost:8080`
 The extension uses the backend proxy at `/api/ide/gemini`, so the API key stays server-side.
 
 ## Installing More Extensions
-Use the Extensions view in the IDE. Code-Server uses the Open VSX registry by default, so Marketplace-only extensions may not be available.
+Use the Extensions view in the IDE to install additional extensions.
 
 ## Notes
 - Note: The Microsoft VS Code Marketplace is not available without licensing. Code-server uses the Open VSX registry, so not all VS Code extensions are available.
