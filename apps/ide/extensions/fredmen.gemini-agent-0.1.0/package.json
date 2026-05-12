@@ -1,0 +1,50 @@
+{
+  "name": "gemini-agent",
+  "displayName": "Gemini Agent",
+  "description": "Gemini coding agent with chat panel and selection actions.",
+  "publisher": "fredmen",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:geminiAgent.openChat",
+    "onCommand:geminiAgent.explainSelection"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "geminiAgent.openChat",
+        "title": "Gemini: Open Chat"
+      },
+      {
+        "command": "geminiAgent.explainSelection",
+        "title": "Gemini: Explain Selection"
+      }
+    ],
+    "configuration": {
+      "title": "Gemini Agent",
+      "properties": {
+        "geminiAgent.proxyUrl": {
+          "type": "string",
+          "default": "http://localhost:3000/api/ide/gemini",
+          "description": "Backend proxy URL for Gemini requests."
+        },
+        "geminiAgent.model": {
+          "type": "string",
+          "default": "gemini-1.5-flash",
+          "description": "Gemini model name to use for requests."
+        },
+        "geminiAgent.includeFileContext": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include the active file content when sending prompts from the chat panel."
+        }
+      }
+    }
+  }
+}

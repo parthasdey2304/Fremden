@@ -1,0 +1,11 @@
+{
+  "name": "@fredmen/ide",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Code-server based IDE with Gemini agent integration",
+  "scripts": {
+    "start": "docker compose -f ../../docker-compose.yml up ide",
+    "start:detached": "docker compose -f ../../docker-compose.yml up -d ide",
+    "stop": "docker compose -f ../../docker-compose.yml stop ide"
+  }
+}
