@@ -57,6 +57,26 @@ services:
       - /app/node_modules
     command: yarn dev
 
+  ide:
+    image: codercom/code-server:4.95.1
+    container_name: fredmen-ide
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    environment:
+      PASSWORD: ${IDE_PASSWORD:-}
+      GEMINI_PROXY_URL: ${IDE_GEMINI_PROXY_URL:-http://backend:3000/api/ide/gemini}
+      GEMINI_DEFAULT_MODEL: ${GEMINI_DEFAULT_MODEL:-gemini-1.5-flash}
+    volumes:
+      - .:/home/coder/project
+      - ide_extensions:/home/coder/extensions
+      - ide_userdata:/home/coder/user-data
+    depends_on:
+      - backend
+    entrypoint: /home/coder/project/apps/ide/entrypoint.sh
+
 volumes:
   postgres_data:
   redis_data:
+  ide_extensions:
+  ide_userdata:

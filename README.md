@@ -21,6 +21,8 @@ For comprehensive project details, see the [Development Plan](docs/development-p
 
 Project structure and setup guide: [Project Structure](docs/PROJECT_STRUCTURE.md)
 
+IDE setup guide: [VS Code-like IDE](docs/IDE.md)
+
 ## Tech Stack
 
 **Frontend:** React Native + Expo, Mapbox GL  

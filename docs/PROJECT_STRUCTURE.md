@@ -28,6 +28,11 @@ fredmen/
 │       │   ├── websocket/   # Socket.IO handlers
 │       │   └── server.ts    # Server entry point
 │       └── package.json
+│   │
+│   └── ide/                 # VS Code-like IDE (code-server + Gemini agent)
+│       ├── extensions/      # Bundled VS Code extensions (Gemini agent)
+│       ├── entrypoint.sh    # Code-server startup script
+│       └── package.json
 │
 ├── packages/
 │   └── shared/              # Shared TypeScript types

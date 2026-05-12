@@ -6,11 +6,13 @@
   "workspaces": [
     "apps/mobile",
     "apps/backend",
+    "apps/ide",
     "packages/*"
   ],
   "scripts": {
     "mobile": "yarn workspace @fredmen/mobile start",
     "backend": "yarn workspace @fredmen/backend dev",
+    "ide": "yarn workspace @fredmen/ide start",
     "mobile:ios": "yarn workspace @fredmen/mobile ios",
     "mobile:android": "yarn workspace @fredmen/mobile android",
     "backend:build": "yarn workspace @fredmen/backend build",
