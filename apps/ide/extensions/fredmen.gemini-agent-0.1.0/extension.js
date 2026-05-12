@@ -107,14 +107,33 @@ const requestGemini = ({ prompt, proxyUrl, model }) =>
     request.end();
   });
 
-const getWebviewHtml = (webview, includeFileContext) => {
-  const cspNonce = crypto.randomBytes(16).toString('base64');
+const getWebviewHtml = (webview, includeFileContext, proxyUrl) => {
+  const cspNonce = crypto.randomBytes(16).toString('hex');
+  let proxyOrigin = '';
+
+  if (proxyUrl) {
+    try {
+      proxyOrigin = new URL(proxyUrl).origin;
+    } catch (error) {
+      proxyOrigin = '';
+    }
+  }
+
+  const cspDirectives = [
+    "default-src 'none';",
+    `style-src 'nonce-${cspNonce}';`,
+    `script-src 'nonce-${cspNonce}';`,
+  ];
+
+  if (proxyOrigin) {
+    cspDirectives.push(`connect-src ${proxyOrigin};`);
+  }
 
   return `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
-      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'nonce-${cspNonce}'; script-src 'nonce-${cspNonce}'; connect-src http://localhost:3000 https://localhost:3000 http://backend:3000 https://backend:3000;" />
+      <meta http-equiv="Content-Security-Policy" content="${cspDirectives.join(' ')}" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Gemini Agent</title>
       <style nonce="${cspNonce}">
@@ -185,8 +204,9 @@ const openChatPanel = (context) => {
 
   const config = vscode.workspace.getConfiguration('geminiAgent');
   const includeFileContext = Boolean(config.get('includeFileContext'));
+  const proxyUrl = getConfigValue(config, 'proxyUrl', 'GEMINI_PROXY_URL');
 
-  panel.webview.html = getWebviewHtml(panel.webview, includeFileContext);
+  panel.webview.html = getWebviewHtml(panel.webview, includeFileContext, proxyUrl);
 
   panel.webview.onDidReceiveMessage(async (message) => {
     if (message.type !== 'sendPrompt') {

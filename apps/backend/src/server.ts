@@ -1,11 +1,11 @@
+import https from 'https';
+import { createServer } from 'http';
+import { URL } from 'url';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import https from 'https';
-import { createServer } from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
-import { URL } from 'url';
 import { z } from 'zod';
 
 // Load environment variables
@@ -51,7 +51,12 @@ type GeminiApiResponse = {
   error?: {
     message?: string;
   };
-  usageMetadata?: unknown;
+  usageMetadata?: {
+    promptTokenCount?: number;
+    candidatesTokenCount?: number;
+    totalTokenCount?: number;
+    cachedContentTokenCount?: number;
+  };
 };
 
 const postExternalJson = async (
