@@ -36,5 +36,5 @@ The extension uses the backend proxy at `/api/ide/gemini`, so the API key stays 
 Use the Extensions view in the IDE. Code-Server uses the Open VSX registry by default, so Marketplace-only extensions may not be available.
 
 ## Notes
-- “All VS Code extensions” is not possible without Marketplace licensing. Use Open VSX compatible extensions.
+- Note: The Microsoft VS Code Marketplace is not available without licensing. Code-server uses the Open VSX registry, so not all VS Code extensions are available.
 - For production, set a strong `IDE_PASSWORD` and run behind HTTPS.

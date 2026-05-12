@@ -108,16 +108,16 @@ const requestGemini = ({ prompt, proxyUrl, model }) =>
   });
 
 const getWebviewHtml = (webview, includeFileContext) => {
-  const nonce = crypto.randomUUID();
+  const cspNonce = crypto.randomUUID();
 
   return `<!DOCTYPE html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
-      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'nonce-${nonce}'; script-src 'nonce-${nonce}';" />
+      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'nonce-${cspNonce}'; script-src 'nonce-${cspNonce}'; connect-src http://localhost:3000 http://backend:3000;" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Gemini Agent</title>
-      <style nonce="${nonce}">
+      <style nonce="${cspNonce}">
         body { font-family: sans-serif; margin: 0; padding: 16px; color: var(--vscode-foreground); }
         .row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
         textarea { width: 100%; height: 140px; resize: vertical; }
@@ -138,7 +138,7 @@ const getWebviewHtml = (webview, includeFileContext) => {
       </div>
       <div id="response"></div>
       <div id="status"></div>
-      <script nonce="${nonce}">
+      <script nonce="${cspNonce}">
         const vscode = acquireVsCodeApi();
         const promptEl = document.getElementById('prompt');
         const responseEl = document.getElementById('response');

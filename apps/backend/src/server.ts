@@ -95,7 +95,11 @@ const postJson = async (
             const data = JSON.parse(responseBody) as GeminiApiResponse;
             resolve({ status, data });
           } catch (error) {
-            reject(new Error('Failed to parse Gemini response.'));
+            reject(
+              new Error(
+                `Failed to parse Gemini response: ${error instanceof Error ? error.message : 'unknown error'}`,
+              ),
+            );
           }
         });
       },
@@ -152,7 +156,14 @@ app.post('/api/ide/gemini', async (req: Request, res: Response, next: NextFuncti
       return;
     }
 
-    const text = data.candidates?.[0]?.content?.parts?.map((part) => part.text ?? '').join('') ?? '';
+    const candidateParts = data.candidates?.[0]?.content?.parts;
+
+    if (!candidateParts || candidateParts.length === 0) {
+      res.status(502).json({ error: 'Gemini response missing content.' });
+      return;
+    }
+
+    const text = candidateParts.map((part) => part.text ?? '').join('');
 
     res.json({
       text,
