@@ -194,7 +194,7 @@ const getWebviewHtml = (webview, includeFileContext, proxyUrl) => {
   </html>`;
 };
 
-const openChatPanel = (context) => {
+const openChatPanel = (extensionContext) => {
   const panel = vscode.window.createWebviewPanel(
     'geminiAgentChat',
     'Gemini Agent',
@@ -232,7 +232,7 @@ const openChatPanel = (context) => {
     } catch (error) {
       panel.webview.postMessage({ type: 'error', text: error.message || 'Gemini request failed.' });
     }
-  }, undefined, context.subscriptions);
+  }, undefined, extensionContext.subscriptions);
 };
 
 const explainSelection = async () => {

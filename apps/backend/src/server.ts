@@ -135,7 +135,9 @@ app.post('/api/ide/gemini', async (req: Request, res: Response, next: NextFuncti
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      res.status(500).json({ error: 'Gemini API key is not configured.' });
+      res.status(500).json({
+        error: 'Gemini API key is not configured. Set GEMINI_API_KEY in your environment variables.',
+      });
       return;
     }
 
